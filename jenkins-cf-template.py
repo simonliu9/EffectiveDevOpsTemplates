@@ -116,6 +116,7 @@ t.add_resource(ec2.Instance(
         ),
     ],
     KeyName=Ref("KeyPair"),
+    IamInstanceProfile=Ref("InstanceProfile"),
     UserData=ud,
 ))
 
