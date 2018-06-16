@@ -100,6 +100,18 @@ t.add_resource(Role(
     )
 ))
 
+t.add_resource(IAMPolicy("Policy", 
+    PolicyName="AllowCodePipeline", 
+    PolicyDocument=Policy( 
+        Statement=[ 
+            Statement(Effect=Allow, 
+                Action=[Action("codepipeline", "*")], 
+                Resource=["*"]) 
+        ] 
+    ), 
+    Roles=[Ref("Role")] 
+)) 
+
 t.add_resource(InstanceProfile( 
     "InstanceProfile", 
     Path="/", 
