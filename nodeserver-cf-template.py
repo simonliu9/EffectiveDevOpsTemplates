@@ -116,7 +116,7 @@ t.add_resource(ec2.SecurityGroup(
             IpProtocol="tcp",
             FromPort=ApplicationPort,
             ToPort=ApplicationPort,
-            CidrIp=PublicCidrIp,
+            CidrIp="10.0.0.0/16",
         ),
     ],
     VpcId=Ref("VpcId"),
@@ -131,7 +131,7 @@ t.add_resource(ec2.SecurityGroup(
             IpProtocol="tcp", 
             FromPort="3000", 
             ToPort="3000", 
-            CidrIp="0.0.0.0/0",
+            CidrIp=PublicCidrIp,
         ), 
     ], 
 )) 
@@ -166,6 +166,10 @@ t.add_resource(elb.LoadBalancer(
 ud = Base64(Join('\n', [
     "#!/bin/bash",
     "yum install --enablerepo=epel -y git",
+    "yum install ruby -y",
+    "wget https://aws-codedeploy-us-west-2.s3.amazonaws.com/latest/install",
+    "chmod +x ./install",
+    "./install auto",
     "#yum install java-1.8.0-openjdk -y",
     "#echo 2 |/usr/sbin/alternatives --config java",
     "pip install ansible",
