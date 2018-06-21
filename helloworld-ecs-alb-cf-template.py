@@ -1,5 +1,8 @@
 """Generating CloudFormation template.""" 
  
+from ipaddress import ip_network
+from ipify import get_ip
+
 from troposphere import elasticloadbalancingv2 as elb 
  
 from troposphere import ( 
