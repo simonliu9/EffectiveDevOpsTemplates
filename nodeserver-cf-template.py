@@ -116,6 +116,7 @@ t.add_resource(IAMPolicy(
                     Action("logs", "Describe*"), 
                     Action("events", "Put*"),
 		    Action("firehouse", "Put*"),
+		    Action("autoscaling", "DescribeAutoScalingInstances"), 
                 ], 
                 Resource=["*"]) 
         ] 
