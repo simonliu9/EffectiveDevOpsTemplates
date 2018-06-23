@@ -5,6 +5,15 @@ from ipify import get_ip
 
 from troposphere import elasticloadbalancingv2 as elb 
  
+from awacs.aws import Allow, Policy, Principal, Statement 
+ 
+from awacs.s3 import PutObject, ARN 
+ 
+from troposphere.s3 import ( 
+    Bucket, 
+    BucketPolicy, 
+) 
+
 from troposphere import ( 
     Export, 
     GetAtt, 
@@ -58,6 +67,16 @@ t.add_resource(elb.LoadBalancer(
         ) 
     ), 
     SecurityGroups=[Ref("LoadBalancerSecurityGroup")], 
+    LoadBalancerAttributes=[
+        elb.LoadBalancerAttributes(
+            Key="access_logs.s3.enabled",
+            Value="true",
+        ),
+        elb.LoadBalancerAttributes(
+            Key="access_logs.s3.bucket",
+            Value=Ref("S3Bucket"),
+        )
+    ], 
 )) 
 
 t.add_resource(elb.TargetGroup( 
@@ -90,6 +109,30 @@ t.add_resource(elb.Listener(
         Type="forward", 
         TargetGroupArn=Ref("TargetGroup") 
     )] 
+)) 
+
+t.add_resource(Bucket( 
+    "S3Bucket", 
+    DeletionPolicy="Retain", 
+)) 
+
+t.add_resource(BucketPolicy( 
+    'BucketPolicy', 
+    Bucket=Ref("S3Bucket"), 
+    PolicyDocument=Policy(
+        Version='2012-10-17',
+        Statement=[
+            Statement(
+                Action=[PutObject],
+                Effect=Allow,
+                Principal=Principal("AWS", ["127311923021"]),
+                Resource=[Join('',
+                               [ARN(''),
+                                Ref("S3Bucket"),
+                                   "/AWSLogs/832165145450/*"])],
+            )
+        ]
+    )
 )) 
 
 t.add_output(Output( 
