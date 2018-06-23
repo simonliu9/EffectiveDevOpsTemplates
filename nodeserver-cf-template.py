@@ -102,6 +102,26 @@ t.add_parameter(Parameter(
     ConstraintDescription='must be a valid EC2 T2 instance type.', 
 )) 
 
+t.add_resource(IAMPolicy( 
+    "MonitoringPolicy", 
+    PolicyName="AllowSendingDataForMonitoring", 
+    PolicyDocument=Policy( 
+        Statement=[ 
+            Statement( 
+                Effect=Allow, 
+                Action=[ 
+                    Action("cloudwatch", "Put*"), 
+                    Action("logs", "Create*"), 
+                    Action("logs", "Put*"), 
+                    Action("logs", "Describe*"), 
+                    Action("events", "Put*"),
+                ], 
+                Resource=["*"]) 
+        ] 
+    ), 
+    Roles=[Ref("Role")] 
+)) 
+
 t.add_resource(ec2.SecurityGroup(
     "SecurityGroup",
     GroupDescription="Allow SSH and TCP/{} access".format(ApplicationPort),
